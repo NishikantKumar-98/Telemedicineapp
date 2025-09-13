@@ -1,0 +1,70 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+.report/
+
+# Runtime data
+.eslintcache
+.vitepress/cache
+.next/
+.nuxt/
+.vercel/
+.idea/
+.vscode/
+*.tgz
+*.zip
+*.rar
+*.7z
+*.gz
+
+# Directory for compiled output
+/build
+/dist
+/out
+
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn-integrity
+.cache
+.env
+.env*.local
+.npmrc
+.yarn/
+.gradle/
+.project
+.classpath
+.settings/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+*.stackdump
+
+# Editors
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+
+# Editor config
+.editorconfig
+
+# Temp files
+*.tmp
+*~
+~*
+
+# Vite
+.vite/
