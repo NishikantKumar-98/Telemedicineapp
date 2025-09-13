@@ -4,11 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Progress } from "./ui/progress";
-import { 
-  Video, 
-  Bot, 
-  FileText, 
-  Pill, 
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "./ui/sheet"; // Import Sheet components
+import { useMobile } from "./ui/use-mobile"; // Import useMobile hook
+import {
+  Video,
+  Bot,
+  FileText,
+  Pill,
   Calendar,
   Bell,
   User,
@@ -24,7 +30,8 @@ import {
   Syringe,
   CalendarPlus,
   BookOpen,
-  MessageSquare
+  MessageSquare,
+  Menu, // Import Menu icon
 } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -148,6 +155,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
   };
 
   const t = translations[language as keyof typeof translations] || translations.en;
+  const isMobile = useMobile(); // Use the useMobile hook
 
   const quickActions = [
     {
@@ -214,9 +222,9 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-green-100 overflow-x-hidden">
       {/* Enhanced Header */}
-      <motion.div 
+      <motion.div
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -225,7 +233,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
         <div className="relative overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-blue-600/5"></div>
-          
+
           <div className="relative z-10 p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -241,7 +249,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                   </Avatar>
                 </motion.div>
                 <div>
-                  <motion.h1 
+                  <motion.h1
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
@@ -249,7 +257,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                   >
                     {t.welcome}
                   </motion.h1>
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4 }}
@@ -268,24 +276,64 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                   </motion.div>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  <Button variant="ghost" size="sm" className="relative hover:bg-primary/10">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
-                  </Button>
-                </motion.div>
-                <Button variant="ghost" size="sm" className="hover:bg-primary/10">
-                  <Settings className="w-5 h-5" />
-                </Button>
-                <Button variant="ghost" size="sm" onClick={onLogout} className="hover:bg-red-50 hover:text-red-600">
-                  <LogOut className="w-5 h-5" />
-                </Button>
+                {isMobile ? (
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                        <Menu className="w-5 h-5" />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="w-full sm:w-3/4 p-4">
+                      <h2 className="text-xl font-bold mb-6 text-primary">Navigation</h2>
+                      <div className="flex flex-col gap-4">
+                        {quickActions.map((action, index) => (
+                          <Button
+                            key={index}
+                            variant="ghost"
+                            className="justify-start gap-3 text-lg h-auto py-3"
+                            onClick={() => {
+                              action.action();
+                            }}
+                          >
+                            <action.icon className={`w-6 h-6 ${action.color.replace('bg-', 'text-')}`} />
+                            {action.title}
+                          </Button>
+                        ))}
+                        <div className="border-t border-gray-200 pt-4 mt-4">
+                          <Button variant="ghost" className="justify-start gap-3 text-lg h-auto py-3 w-full" onClick={() => toast.info("Settings Clicked")}>
+                            <Settings className="w-6 h-6 text-gray-600" />
+                            {t.settings}
+                          </Button>
+                          <Button variant="ghost" className="justify-start gap-3 text-lg h-auto py-3 w-full" onClick={onLogout}>
+                            <LogOut className="w-6 h-6 text-red-500" />
+                            {t.logout}
+                          </Button>
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                ) : (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      <Button variant="ghost" size="sm" className="relative hover:bg-primary/10">
+                        <Bell className="w-5 h-5" />
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
+                      </Button>
+                    </motion.div>
+                    <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                      <Settings className="w-5 h-5" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={onLogout} className="hover:bg-red-50 hover:text-red-600">
+                      <LogOut className="w-5 h-5" />
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -299,7 +347,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200">
               <CardContent className="p-4 text-center">
                 <Heart className="w-8 h-8 text-red-500 mx-auto mb-2" />
@@ -307,7 +355,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                 <p className="text-sm text-red-600">Heart Rate</p>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
               <CardContent className="p-4 text-center">
                 <Activity className="w-8 h-8 text-blue-500 mx-auto mb-2" />
@@ -315,7 +363,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                 <p className="text-sm text-blue-600">Blood Pressure</p>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
               <CardContent className="p-4 text-center">
                 <TrendingUp className="w-8 h-8 text-green-500 mx-auto mb-2" />
@@ -323,7 +371,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                 <p className="text-sm text-green-600">Temperature</p>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
               <CardContent className="p-4 text-center">
                 <Calendar className="w-8 h-8 text-purple-500 mx-auto mb-2" />
@@ -341,9 +389,9 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
           transition={{ delay: 0.3 }}
         >
           <Card className="shadow-lg bg-gradient-to-r from-blue-50 to-purple-50">
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
               <CardTitle className="text-xl font-bold text-gray-800">{t.personalizedInsights}</CardTitle>
-              <Button variant="outline" size="sm" className="hover:bg-primary hover:text-white transition-colors">
+              <Button variant="outline" size="sm" className="hover:bg-primary hover:text-white transition-colors w-full sm:w-auto text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">
                 <Plus className="w-4 h-4 mr-2" />
                 {t.viewRecommendations}
               </Button>
@@ -384,8 +432,8 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
               View All
             </Button>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
             {quickActions.map((action, index) => (
               <motion.div
                 key={index}
@@ -395,7 +443,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Card 
+                <Card
                   className="cursor-pointer hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/30 group"
                   onClick={() => handleQuickAction(action.action, `Opening ${action.title}...`)}
                 >
@@ -429,9 +477,9 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
         >
           <Card className="shadow-lg">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-green-50">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
                 <CardTitle className="text-xl font-bold text-gray-800">{t.upcomingAppointments}</CardTitle>
-                <Button variant="outline" size="sm" className="hover:bg-primary hover:text-white transition-colors">
+                <Button variant="outline" size="sm" className="hover:bg-primary hover:text-white transition-colors w-full sm:w-auto text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">
                   <Calendar className="w-4 h-4 mr-2" />
                   {t.viewUpcoming}
                 </Button>
@@ -458,7 +506,7 @@ export function PatientDashboard({ onNavigate, onLogout, language }: PatientDash
                 </div>
                 <Badge className="bg-green-100 text-green-700 hover:bg-green-200">Confirmed</Badge>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}

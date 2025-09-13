@@ -222,3 +222,4 @@ export function BloodBankScreen({ onBack, language }: BloodBankScreenProps) {
   );
 }
 
+

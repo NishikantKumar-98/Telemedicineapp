@@ -260,6 +260,7 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="w-full max-w-full mx-auto p-4 sm:p-6 md:p-8 min-w-0"
         >
           {renderScreen()}
         </motion.div>
